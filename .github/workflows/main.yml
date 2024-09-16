@@ -34,7 +34,6 @@ jobs:
 
       - name: Install package build dependencies
         run: |
-          package_info=$(head -n 1 debian/changelog)
           package_name=$(echo "${package_info}" | awk '{ print $1 }')
           mk-build-deps --remove --install --tool "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes" debian/control
           rm -f ${package_name}-build-deps_*.*
