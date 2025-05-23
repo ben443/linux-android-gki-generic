@@ -21,8 +21,10 @@ jobs:
         export ARCH=arm64
         export CROSS_COMPILE=aarch64-linux-gnu-
         make gki_defconfig
-        make ARCH=arm64 modules -j$(nproc)
-        make modules_install
+        make ARCH=arm64 -j$(nproc)
+        # Create a modules directory to install the kernel modules
+        mkdir -p modules
+        make modules_install INSTALL_MOD_PATH=modules
 
     - name: Create Artifact Directory
       run: mkdir -p artifacts
@@ -32,6 +34,8 @@ jobs:
         cp arch/arm64/boot/Image artifacts/
         find arch/arm64/boot/dts -name '*.dtb' -exec cp {} artifacts/ \;
         find . -name '*.ko' -exec cp --parents {} artifacts/ \;
+        # Optionally, include the installed modules as an artifact
+        cp -r modules artifacts/modules
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
